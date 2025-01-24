@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "3zDoCFqa0nJJxJM3F+/3RDNhMwCedevPFAmYJysSnWw=",
+  "Source": "WhatsApp.API",
+  "BasePath": "_content/WhatsApp.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
