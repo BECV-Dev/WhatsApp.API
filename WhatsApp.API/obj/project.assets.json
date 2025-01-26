@@ -5169,24 +5169,25 @@
     ]
   },
   "packageFolders": {
-    "/home/enrique-castellanos/.nuget/packages/": {}
+    "/Users/enriquecastellanos/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/enrique-castellanos/RiderProjects/WhatsApp.API/WhatsApp.API/WhatsApp.API.csproj",
+      "projectUniqueName": "/Users/enriquecastellanos/RiderProjects/WhatsApp.API/WhatsApp.API/WhatsApp.API.csproj",
       "projectName": "WhatsApp.API",
-      "projectPath": "/home/enrique-castellanos/RiderProjects/WhatsApp.API/WhatsApp.API/WhatsApp.API.csproj",
-      "packagesPath": "/home/enrique-castellanos/.nuget/packages/",
-      "outputPath": "/home/enrique-castellanos/RiderProjects/WhatsApp.API/WhatsApp.API/obj/",
+      "projectPath": "/Users/enriquecastellanos/RiderProjects/WhatsApp.API/WhatsApp.API/WhatsApp.API.csproj",
+      "packagesPath": "/Users/enriquecastellanos/.nuget/packages/",
+      "outputPath": "/Users/enriquecastellanos/RiderProjects/WhatsApp.API/WhatsApp.API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/enrique-castellanos/.nuget/NuGet/NuGet.Config"
+        "/Users/enriquecastellanos/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "/Users/enriquecastellanos/.dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -5244,7 +5245,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/enrique-castellanos/.dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/enriquecastellanos/.dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

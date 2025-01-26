@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhatsApp.API.Models;
-using WhatsApp.API.Context;
+using WhatsApp.API.Service;
 
 namespace WhatsApp.API.Controllers
 {
@@ -9,126 +9,98 @@ namespace WhatsApp.API.Controllers
     [ApiController]
     public class EmpleadoController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly EmpleadoService _empleadoService;
 
-        public EmpleadoController(AppDbContext context)
+        // Inyección de dependencias: el controlador recibe el servicio a través del constructor
+        public EmpleadoController(EmpleadoService empleadoService)
         {
-            _context = context;
+            _empleadoService = empleadoService;
         }
 
-        // Obtener todos los empleados
+        // GET: api/empleado
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Empleado>>> GetEmpleados()
         {
-            try
-            {
-                var empleados = await _context.Empleados.ToListAsync();
-                return Ok(empleados);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
+            var empleados = await _empleadoService.GetAllEmpleadosAsync();
+            return Ok(empleados);
         }
 
-        // Obtener un empleado por ID
+        // GET: api/empleado/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Empleado>> GetEmpleado(int id)
         {
-            try
-            {
-                var empleado = await _context.Empleados.FindAsync(id);
-
-                if (empleado == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(empleado);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        // Crear un nuevo empleado
-        [HttpPost]
-        public async Task<ActionResult<Empleado>> PostEmpleado(Empleado empleado)
-        {
-            try
-            {
-                // Verificamos si ya existe un empleado con el mismo email
-                if (_context.Empleados.Any(e => e.Email == empleado.Email))
-                {
-                    return BadRequest("Ya existe un empleado con ese email.");
-                }
-
-                // Agregar el empleado
-                _context.Empleados.Add(empleado);
-                await _context.SaveChangesAsync();
-
-                // Retornar el empleado insertado
-                return CreatedAtAction("GetEmpleado", new { id = empleado.Id }, empleado);
-            }
-            catch (Exception ex)
-            {
-                // Si ocurre un error, devolverlo
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        // Actualizar un empleado
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmpleado(int id, Empleado empleado)
-        {
-            if (id != empleado.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(empleado).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmpleadoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // Eliminar un empleado
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmpleado(int id)
-        {
-            var empleado = await _context.Empleados.FindAsync(id);
-
+            var empleado = await _empleadoService.GetEmpleadoByIdAsync(id);
             if (empleado == null)
             {
                 return NotFound();
             }
 
-            _context.Empleados.Remove(empleado);
-            await _context.SaveChangesAsync();
+            var arrayEmpleado = new Empleado
+            {
+                Id = empleado.Id,
+                Nombre = empleado.Nombre
+            };
+            
+            return Ok(arrayEmpleado);
+        }
 
+        // POST: api/empleado
+        [HttpPost]
+        public async Task<ActionResult<Empleado>> AddEmpleado(Empleado empleado)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Devuelve un error si el modelo no es válido
+            }
+            
+            try
+            {
+                empleado.Nombre = null;
+                await _empleadoService.AddEmpleadoAsync(empleado);
+                return CreatedAtAction(nameof(GetEmpleado), new { id = empleado.Id }, empleado);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, new { message = "Error en la base de datos.", details = dbEx.Message });
+            }
+            catch (Exception ex)
+            {
+                // Aquí puedes loggear el error o agregar lógica específica de manejo
+                return StatusCode(500, new { message = "Ocurrió un error inesperado al agregar el empleado.", details = ex.Message });
+            }
+        }
+
+
+        // PUT: api/empleado/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmpleado(int id, Empleado empleado)
+        {
+            if (id != empleado.Id)
+            {
+                return BadRequest();
+            }
+            
+            var existingEmpleado = await _empleadoService.GetEmpleadoByIdAsync(id);
+            if (existingEmpleado == null)
+            {
+                return NotFound(); // Devuelve 404 si el empleado no existe
+            }
+            
+            await _empleadoService.UpdateEmpleadoAsync(empleado);
             return NoContent();
         }
 
-        // Verificar si el empleado existe
-        private bool EmpleadoExists(int id)
+        // DELETE: api/empleado/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmpleado(int id)
         {
-            return _context.Empleados.Any(e => e.Id == id);
+            var empleado = await _empleadoService.GetEmpleadoByIdAsync(id);
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+            await _empleadoService.DeleteEmpleadoAsync(id);
+            return NoContent();
         }
     }
 }

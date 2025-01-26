@@ -1,0 +1,16 @@
+::: BEGIN :::
+Optimizar para producción (opcional):
+
+En un entorno de producción, podría ser útil eliminar el detalle completo de la excepción (exception.Message) de la respuesta para evitar exponer información sensible. Para esto, puedes modificar el bloque de código en HandleExceptionAsync para controlar qué información se muestra:
+csharp
+Copiar
+Editar
+var response = new
+{
+    statusCode = context.Response.StatusCode,
+    message,
+    // Solo incluir los detalles de la excepción en desarrollo
+    details = environment.IsDevelopment() ? exception.Message : null
+};
+Asegúrate de agregar IWebHostEnvironment environment como un parámetro en el constructor del middleware si quieres usar esta optimización.
+::: END :::
